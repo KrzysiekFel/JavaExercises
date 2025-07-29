@@ -45,7 +45,7 @@ public class UniversityService {
         }
     }
 
-    public List<Professor> professorsHwoTeachMoreThanXSubjects(int subjectsCount) {
+    public List<Professor> getProfessorsWhoTeachMoreThanXSubjects(int subjectsCount) {
         List<Professor> resultProfessors = new ArrayList<>();
         for (Professor professor : this.professors) {
             if (professor.getSubjects().size() > subjectsCount) {
@@ -55,52 +55,19 @@ public class UniversityService {
         return resultProfessors;
     }
 
-    public Set<Student> studentsHavingMoreTHanXCommonSubject(int subjectsCount) {
-//uznalem ze ze taki uczen to ten ktory ma ze wszystkimi innymi takie same wspolne przedmioty
-//bo mozna bylo zrobic tak ze ma wspolne z każdym ale te wspolne sa różne
-//        Set<Student> resultStudents = new HashSet<>();
-//
-//        for (int i = 0; i < this.students.size() - 1; i++) {
-//            Student student1 = this.students.get(i);
-//            Set<Subject> subjectsStudent1 = new HashSet<>(student1.getSubjects());
-//            Set<Subject> commonSubjects = new HashSet<>(subjectsStudent1);
-//            for (int j = i + 1; j < this.students.size(); j++) {
-//                Student student2 = this.students.get(j);
-//                Set<Subject> subjectsStudent2 = new HashSet<>(student2.getSubjects());
-//                commonSubjects.retainAll(subjectsStudent2);
-//            }
-//            if (commonSubjects.size() > subjectsCount) {
-//                resultStudents.add(student1);
-//                if (i == this.students.size() - 2) {
-//                    resultStudents.add(this.students.get(i + 1));
-//                }
-//            }
-//        }
-//        return resultStudents;
-
-        // a gdyby chodzilo ze liczy sie student ktory ze wwszystkimi (kazdym z osobna) ma jakiekolwiek wspolne to:
+    public Set<Student> getStudentsThatHaveMoreThanXCommonSubjectsWithGivenStudent(int subjectsCount, Student givenStudent) {
         Set<Student> resultStudents = new HashSet<>();
-        for (Student student1 : this.students) {
-            boolean hasEnoughCommonWithAll = true;
-            Set<Subject> subjectsStudent1 = new HashSet<>(student1.getSubjects());
-            Set<Subject> commonSubjects = new HashSet<>(subjectsStudent1);
-            for (Student student2 : this.students) {
-                if (student1 == student2) {
-                    continue;
-                }
-                Set<Subject> subjectsStudent2 = new HashSet<>(student2.getSubjects());
-                commonSubjects.retainAll(subjectsStudent2);
-                if (commonSubjects.size() <= subjectsCount) {
-                    hasEnoughCommonWithAll = false;
-                    break;
-                }
+        for (Student student : this.students) {
+            if (student == givenStudent) {
+                continue;
             }
-            if (hasEnoughCommonWithAll) {
-                resultStudents.add(student1);
+            Set<Subject> subjectsStudent = new HashSet<>(student.getSubjects());
+            Set<Subject> commonSubjects = new HashSet<>(subjectsStudent);
+            commonSubjects.retainAll(givenStudent.getSubjects());
+            if (commonSubjects.size() > subjectsCount) {
+                resultStudents.add(student);
             }
         }
         return resultStudents;
-
-
     }
 }

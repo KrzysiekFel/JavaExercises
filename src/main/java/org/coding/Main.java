@@ -28,8 +28,8 @@ public class Main {
         System.out.println(student1.greet());
         System.out.println(professor.greet());
         System.out.println(universityService.getAllStudentsForProfessor(professor));
-        System.out.println(universityService.professorsHwoTeachMoreThanXSubjects(1));
-        System.out.println(universityService.studentsHavingMoreTHanXCommonSubject(1));
+        System.out.println(universityService.getProfessorsWhoTeachMoreThanXSubjects(1));
+        System.out.println(universityService.getStudentsThatHaveMoreThanXCommonSubjectsWithGivenStudent(1, student1));
     }
 }
 

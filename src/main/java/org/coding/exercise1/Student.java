@@ -14,7 +14,6 @@ public class Student extends Person {
         return studiesYear;
     }
 
-
     @Override
     public String greet() {
         return String.format("Hello, I'm %dth year student here and my name is: %s %s and I'm %d years old. \n" +
@@ -22,4 +21,10 @@ public class Student extends Person {
                 this.getStudiesYear(), this.getFirstName(), this.getSecondName(), this.getAge(), this.getSubjects().toString());
     }
 
+    @Override
+    public String toString() {
+        return "Student{" +
+                "firstName='" + this.getFirstName() + '\'' +
+                ", secondName='" + this.getSecondName() + "}";
+    }
 }
