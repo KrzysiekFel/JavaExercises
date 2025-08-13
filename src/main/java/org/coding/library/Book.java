@@ -3,6 +3,7 @@ package org.coding.library;
 import java.time.LocalDate;
 
 public class Book {
+    private static long nextId = 1;
     private final Long id;
     private final String title;
     private final String author;
@@ -11,7 +12,7 @@ public class Book {
     private final BookType bookType;
 
     private Book(Builder builder) {
-        this.id = builder.id;
+        this.id = nextId++;
         this.title = builder.title;
         this.author = builder.author;
         this.pages = builder.pages;
@@ -44,18 +45,11 @@ public class Book {
     }
 
     public static class Builder {
-        private Long id;
         private String title;
         private String author;
         private Integer pages;
         private LocalDate publishDate;
         private BookType bookType;
-
-
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
 
         public Builder title(String title) {
             this.title = title;
@@ -87,5 +81,11 @@ public class Book {
         }
     }
 
-
+    @Override
+    public String toString() {
+        return String.format(
+                "Book{id=%d, title='%s', author='%s', pages=%d, publishDate=%s, type=%s}",
+                id, title, author, pages, publishDate, bookType
+        );
+    }
 }
