@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LibraryService {
-    private LibraryService instance;
+    private static LibraryService instance;
     private SortBookStrategy sortBookStrategy;
     private final List<Book> availableBooks;
     private final List<User> users;
@@ -20,11 +20,11 @@ public class LibraryService {
         this.userFeeMap = new HashMap<>();
     }
 
-    public LibraryService getInstance() {
-        if (this.instance == null) {
+    public static LibraryService getInstance() {
+        if (instance == null) {
             return new LibraryService();
         }
-        return this.instance;
+        return instance;
     }
 
     public void setSortBookStrategy(SortBookStrategy sortStrategy) {
