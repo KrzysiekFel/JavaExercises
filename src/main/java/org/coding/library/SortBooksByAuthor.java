@@ -7,6 +7,6 @@ public class SortBooksByAuthor implements SortBookStrategy {
 
     @Override
     public void sort(List<Book> books) {
-        books.sort(Comparator.comparing(Book::getAuthor));
+        books.sort(Comparator.comparing(Book::getAuthor)); // referencja do metody (z Book referuje do getauthor)
     }
 }
