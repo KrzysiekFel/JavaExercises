@@ -80,31 +80,76 @@ public class WallTests {
     }
 
     @Test
-    void shouldFindCorrectColorBlock() {
-        Assertions.assertEquals(Optional.of(blueMetalCompositeBlock), wall.findBlockByColor("blue"));
-        Assertions.assertEquals(Optional.of(redPaperBlock), wall.findBlockByColor("red"));
-        Assertions.assertEquals(Optional.of(yellowMetalBlock), wall.findBlockByColor("yellow"));
-        Assertions.assertEquals(Optional.of(multicoloredTransparent), wall.findBlockByColor("multicolored"));
+    void shouldFindBlueBlockNotNested() {
+        Optional<Block> result = wall.findBlockByColor("blue");
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(Optional.of(blueMetalCompositeBlock), result);
     }
 
     @Test
-    void shouldFindCorrectMaterialBlocks() {
+    void shouldFindRedBlockNested() {
+        Optional<Block> result = wall.findBlockByColor("red");
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(Optional.of(redPaperBlock), result);
+    }
+
+    @Test
+    void shouldFindYellowBlockAfterOtherNested() {
+        Optional<Block> result = wall.findBlockByColor("yellow");
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(Optional.of(yellowMetalBlock), result);
+    }
+
+    @Test
+    void shouldFindMulticoloredBlockDoubleNested() {
+        Optional<Block> result = wall.findBlockByColor("multicolored");
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(Optional.of(multicoloredTransparent), result);
+    }
+
+    @Test
+    void shouldFindMetalBlocks() {
+        // GIVEN
         List<Block> expectedMetalBlocks =
                 List.of(blueMetalCompositeBlock, redMetalBlock, blueMetalBlock, yellowMetalBlock, blueMetalBlock,
                         yellowMetalBlock, blueMetalBlock, yellowMetalBlock, redMetalBlock);
+
+        // WHEN
+        List<Block> result = wall.findBlocksByMaterial("metal");
+        // tutaj też dajemy np mockito when then
+
+        // THEN
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(expectedMetalBlocks, result);
+    }
+
+    @Test
+    void shouldFindPaperBlocks() {
         List<Block> expectedPaperBlocks =
                 List.of(redPaperBlock, yellowPaperNestedCompositeBlock, redPaperCompositeBlock, redPaperBlock,
                         yellowPaperBlock, redPaperBlock, yellowPaperBlock);
+
+        List<Block> result = wall.findBlocksByMaterial("paper");
+
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(expectedPaperBlocks, result);
+    }
+
+    @Test
+    void shouldFindTransparentBlocks() {
         List<Block> expectedTransparentBlocks = List.of(multicoloredTransparent);
 
-        Assertions.assertEquals(expectedMetalBlocks, wall.findBlocksByMaterial("metal"));
-        Assertions.assertEquals(expectedPaperBlocks, wall.findBlocksByMaterial("paper"));
-        Assertions.assertEquals(expectedTransparentBlocks, wall.findBlocksByMaterial("transparent"));
+        List<Block> result = wall.findBlocksByMaterial("transparent");
+
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(expectedTransparentBlocks, result);
     }
 
     @Test
     public void shouldCountAllBlocks() {
-        Assertions.assertEquals(17, wall.count());
+        int result = wall.count();
+
+        Assertions.assertEquals(17, result);
     }
 
 }

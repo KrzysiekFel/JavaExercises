@@ -42,26 +42,24 @@ public class Wall implements Structure {
     }
 
     private List<Block> findBlocksByMaterialHelper(String material, List<Block> blocks) {
-        List<Block> foundedBlocks = new ArrayList<>();
+        List<Block> foundBlocks = new ArrayList<>();
         for (Block block : blocks) {
             if (block.getMaterial().equalsIgnoreCase(material)) {
-                foundedBlocks.add(block);
+                foundBlocks.add(block);
             }
             if (block instanceof CompositeBlock compositeBlock) {
-                foundedBlocks.addAll(this.findBlocksByMaterialHelper(material, compositeBlock.getBlocks()));
+                foundBlocks.addAll(this.findBlocksByMaterialHelper(material, compositeBlock.getBlocks()));
             }
         }
-        return foundedBlocks;
+        return foundBlocks;
     }
 
     private int countHelper(List<Block> blocks) {
         int counter = 0;
         for (Block block : blocks) {
+            counter++;
             if (block instanceof CompositeBlock compositeBlock) {
-                counter++; // if adding composite block is not needed -> TO DELETE
                 counter += this.countHelper(compositeBlock.getBlocks());
-            } else {
-                counter++;
             }
         }
         return counter;
