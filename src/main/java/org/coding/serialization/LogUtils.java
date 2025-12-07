@@ -33,4 +33,8 @@ public class LogUtils {
     public static void warn(String message, String className) {
         log(message, LogLevel.WARN, className);
     }
+
+    public static void error(String message, String className) {
+        log(message, LogLevel.WARN, className);
+    }
 }

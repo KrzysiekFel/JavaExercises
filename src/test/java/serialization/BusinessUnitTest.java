@@ -8,12 +8,15 @@ import org.coding.serialization.Position;
 import org.coding.serialization.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,8 +44,20 @@ public class BusinessUnitTest {
         bu = new BusinessUnit("Product", tom, productUnitEmployees);
     }
 
+    static Stream<Employee> employeeProvider() {
+        BusinessUnitTest testInstance = new BusinessUnitTest();
+        testInstance.beforeEachTest();
+        return Stream.of(testInstance.tom, testInstance.bob, testInstance.jon);
+    }
+
+    @ParameterizedTest
+    @MethodSource("employeeProvider")
+    void createEmployeeAndSetStatusToNew(Employee employee) {
+        assertEquals(Status.NEW, employee.getStatus());
+    }
+
     @Test
-    void creatingEmployeeSetStatusToNew() {
+    void createEmployeeAndSetStatusToNew() {
         assertEquals(Status.NEW, tom.getStatus());
         assertEquals(Status.NEW, bob.getStatus());
         assertEquals(Status.NEW, jon.getStatus());
@@ -63,18 +78,18 @@ public class BusinessUnitTest {
 
     @Test
     void readObjectChangesEmployeeStatusToFinished() throws IOException, ClassNotFoundException {
-        Path tempFile = Files.createTempFile("businessUnit", ".ser");
-        bu.saveBusinessUnit(tempFile);
-        BusinessUnit deserialized = bu.loadBusinessUnit(tempFile);
+        Path resourceFile = Path.of("src/test/resources/serializedProductUnit.ser");
+        BusinessUnit deserialized = new BusinessUnit("dummy", tom, List.of())
+                .loadBusinessUnit(resourceFile);
         List<Employee> deserializedEmployees = deserialized.getEmployees();
 
-        Status tomStatus = deserializedEmployees.get(0).getStatus();
-        Status bobStatus = deserializedEmployees.get(1).getStatus();
-        Status jonStatus = deserializedEmployees.get(2).getStatus();
+        Status statusResult0 = deserializedEmployees.get(0).getStatus();
+        Status statusResult1 = deserializedEmployees.get(1).getStatus();
+        Status statusResult2 = deserializedEmployees.get(2).getStatus();
 
-        assertEquals(Status.FINISHED, tomStatus);
-        assertEquals(Status.FINISHED, bobStatus);
-        assertEquals(Status.FINISHED, jonStatus);
+        assertEquals(Status.FINISHED, statusResult0);
+        assertEquals(Status.FINISHED, statusResult1);
+        assertEquals(Status.FINISHED, statusResult2);
     }
 
     @Test
@@ -88,7 +103,7 @@ public class BusinessUnitTest {
         RuntimeException exception =
                 assertThrows(RuntimeException.class,
                         () -> new BusinessUnit("Product", developer, employees));
-        assertEquals("Invalid position", exception.getMessage());
+        assertEquals("Head of business unit must have MANAGER position.", exception.getMessage());
     }
 
 }

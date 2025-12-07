@@ -72,21 +72,20 @@ public class Employee implements Serializable {
     }
 
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+        LogUtils.info("deserialize Employee" + name, this.getClass().getName());
         in.defaultReadObject();
         if (!status.equals(Status.START)) {
-            throw new RuntimeException("Invalid Employee status");
+            throw new InvalidEmployeeStatus("Employee status should me START.");
         }
-        LogUtils.info("deserialize Employee" + name, this.getClass().getName());
         status = Status.FINISHED;
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
-        if (!status.equals(Status.NEW)) {
-            throw new RuntimeException("Invalid Employee status");
-        }
         LogUtils.info("serialize Employee" + name, this.getClass().getName());
+        if (!status.equals(Status.NEW)) {
+            throw new InvalidEmployeeStatus("Employee status should me NEW.");
+        }
         status = Status.START;
         out.defaultWriteObject();
     }
-
 }

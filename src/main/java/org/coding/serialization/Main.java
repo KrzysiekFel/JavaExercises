@@ -25,9 +25,10 @@ public class Main {
         productUnitEmployees.add(jon);
 
         BusinessUnit productUnit = new BusinessUnit("Product", tom, productUnitEmployees);
+        Path filePath = Path.of("data/serializedFiles/serializedProductUnit2.ser");
         try {
             productUnit.saveBusinessUnit(
-                    Path.of("data/serializedFiles/serializedProductUnit2.ser"));
+                    filePath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -39,7 +40,7 @@ public class Main {
         try {
             BusinessUnit businessUnit =
                     productUnit.loadBusinessUnit(
-                            Path.of("data/serializedFiles/serializedProductUnit2.ser"));
+                            filePath);
             for (Employee e : businessUnit.getEmployees()) {
                 System.out.println(e.getName() + e.getStatus());
             }

@@ -19,7 +19,7 @@ public class BusinessUnit implements Serializable {
 
     public BusinessUnit(String name, Employee headOfUnit, List<Employee> employees) {
         if (!Position.MANAGER.equals(headOfUnit.getPosition())) {
-            throw new RuntimeException("Invalid position");
+            throw new InvalidHeadOfUnitException("Head of business unit must have MANAGER position.");
         }
         this.name = name;
         this.headOfUnit = headOfUnit;
@@ -40,7 +40,7 @@ public class BusinessUnit implements Serializable {
 
     public void setHeadOfUnit(Employee headOfUnit) {
         if (!Position.MANAGER.equals(headOfUnit.getPosition())) {
-            throw new RuntimeException("Invalid position");
+            throw new InvalidHeadOfUnitException("Head of business unit must have MANAGER position.");
         }
         this.headOfUnit = headOfUnit;
     }
@@ -51,7 +51,6 @@ public class BusinessUnit implements Serializable {
 
     public void saveBusinessUnit(Path filePath) throws IOException {
         Path parentPath = filePath.getParent();
-        System.out.println(parentPath.toString());
         if (Files.notExists(parentPath)) {
             Files.createDirectories(parentPath);
         }

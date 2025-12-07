@@ -7,35 +7,30 @@ import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 public class BackupService {
-    public static void createBackupOfFiles(Path pathToBackupFrom) throws IOException {
-        if (!Files.exists(pathToBackupFrom)) {
-            System.out.println("Provided path for backup does not exist.");
-            return;
-        }
-        if (!Files.isDirectory(pathToBackupFrom)) {
-            System.out.println("Provided path for backup is not directory");
-            return;
+    public static void createBackupOfFiles(Path sourcePath) throws IOException {
+        if (!Files.exists(sourcePath)) {
+            throw new InvalidSourceDirectoryException("Provided path for backup does not exist.");
         }
 
-        Path backupFolder = pathToBackupFrom.toAbsolutePath().getParent()
-                .resolve(pathToBackupFrom.getFileName() + "Backup");
+        Path backupFolder = sourcePath.toAbsolutePath().getParent()
+                .resolve(sourcePath.getFileName() + "_" + "Backup");
         if (Files.notExists(backupFolder)) {
             Files.createDirectories(backupFolder);
         }
 
-        try (Stream<Path> stream = Files.walk(pathToBackupFrom)) {
-            stream.forEach(sourcePath -> {
+        if (Files.isRegularFile(sourcePath)) {
+            Path target = backupFolder.resolve(sourcePath.getFileName());
+            Files.copy(sourcePath, target, StandardCopyOption.REPLACE_EXISTING);
+            return;
+        }
+
+        try (Stream<Path> stream = Files.walk(sourcePath)) {
+            stream.forEach(path -> {
                 try {
-                    Path targetPath = backupFolder.resolve(pathToBackupFrom.relativize(sourcePath));
-                    if (Files.isDirectory(sourcePath)) {
-                        if (!Files.exists(targetPath)) {
-                            Files.createDirectories(targetPath);
-                        }
-                    } else {
-                        Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-                    }
+                    Path targetPath = backupFolder.resolve(sourcePath.relativize(path));
+                    Files.copy(path, targetPath, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    LogUtils.error("Failed to copy file: " + path, "BackupService");
                 }
             });
         }
